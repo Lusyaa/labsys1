@@ -1,17 +1,15 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 // 入口文件（全局）
 import Vue from 'vue'
 import App from './App'
 import router from './router' // 导入路由依赖
 import ElementUI from 'element-ui' // 导入elementui依赖
 import 'element-ui/lib/theme-chalk/index.css'
-// 引入全局样式
-import './assets/css/global.css'
-import axios from 'axios'
-
+import $ from 'jquery'
+import './assets/css/global.css'// 引入全局样式
+import('./assets/icon/iconfont.css') // 引入第三方阿里图标
+import axios from 'axios'// 引入 axios
 Vue.prototype.$http = axios
-axios.defaults.baseURL = 'http://127.0.0.1:8080/api/private/v1/' // 配置请求根路径
+axios.defaults.baseURL = 'http://10.0.42.4:8007' // 配置请求根路径http://10.0.42.4:8007
 // 在Vue中全局使用
 Vue.use(ElementUI) // 使用element-ui
 
