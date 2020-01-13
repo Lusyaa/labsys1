@@ -9,11 +9,11 @@
     <!--卡片视图区域-->
     <el-card>
       <!--搜索与添加区域-->
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-input placeholder="请输入内容" clearable @clear="getUserList">
+      <el-row :gutter="10">
+        <el-col :span="7">
+          <el-input placeholder="请输入内容" clearable >
             <!--p51-->
-            <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
+            <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
@@ -21,14 +21,15 @@
         </el-col>
       </el-row>
       <!--用户列表区域-->
-      <el-table :data="userlist" border stripe>
+      <el-table :data="userList" border stripe >
         <el-table-column type="index" label="#"></el-table-column>
         <el-table-column label="编号" prop="userCount"></el-table-column>
         <el-table-column label="姓名" prop="userName"></el-table-column>
         <el-table-column label="性别" prop="gender"></el-table-column>
-        <el-table-column label="角色" prop="role"></el-table-column>
-        <el-table-column label="班级" prop="class"></el-table-column>
-        <el-table-column label="出生日期" prop="date"></el-table-column>
+        <el-table-column label="角色" prop="roleName"></el-table-column>
+        <el-table-column label="班级" prop="userGrade"></el-table-column>
+        <el-table-column label="出生日期" prop="birth"></el-table-column>
+        <el-table-column label="座位号" prop="seatNum"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
             <!--{{scope.row}} 获取一行数据-->
@@ -49,20 +50,14 @@
         </el-table-column>
       </el-table>
       <!--页码-->
-      <div class="block">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="queryInfo.pagenum"
-          :page-sizes="[1, 5, 10, 15]"
-          :page-size="queryInfo.pagesize"
-          layout="total, sizes, prev, pager, next, jumper" :total="total">
-          <!--
-          layout: 指定页面上展示的分页布局结构(功能组件)；
-          page-sizes: 规定一页要显示的数据个数；
-          -->
-        </el-pagination>
-      </div>
+      <el-pagination
+        layout="total, prev, pager, next"
+        :total="total"
+        :page-size="params.size"
+        :current-page="params.page"
+        @current-change="changePage"
+        style="float: right;">
+      </el-pagination>
     </el-card>
     <!--添加用户 对话框-->
     <el-dialog title="提示" :visible.sync="addDialogVisible" width="50%" append-to-body center>
@@ -112,35 +107,29 @@
 </template>
 
 <script>
+  import * as userApi from '../api/user'
+
   export default {
     name: 'Users',
     data () {
-      return {
+      return {// loading: true,
         // 获取用户列表的参数对象
-        queryInfo: {
-          query: '', // 查询参数
-          pagenum: 1, // 当前页数
-          pagesize: 5  // 当前每页显示多少条数据
+        params: {
+          page: 1, // 当前页数
+          size: 5, // 当前每页显示多少条数据
+          userCount: '',
+          userName:'',
+          roleId: ''
         },
-        // 用户数据
-        userlist: [
-          {userCount: '1607001',class: '16级 移动一班', userName: '王虎化', gender: '男', state: 1, date: '2016-08-02', role: '用户'},
-          {userCount: '1607002',class: '16级 移动二班', userName: '王小化', gender: '男', state: 0, date: '2016-05-02', role: '管理员'},
-          {userCount: '1607003',class: '16级 移动三班', userName: '王化虎', gender: '女', state: 1, date: '2016-01-02', role: '用户'},
-          {userCount: '004', class: '', userName: '王化小', gender: '男', state: 0, date: '2016-04-02', role: '管理员'},
-          {userCount: '1607005',class: '16级 嵌入一班', userName: '王小强', gender: '男', state: 0, date: '2016-06-02', role: '用户'},
-        ],
-        // 数据总条数
-        total: 10,
-        // 控制 添加用户 对话框的显示与隐藏
-        addDialogVisible: false,
+        userList: [],// 用户数据
+        total: 0,// 数据总条数
+        addDialogVisible: false, // 控制 添加用户 对话框的显示与隐藏
         ruleForm: {
           userCount: '',
           userName: '',
           gender: '',
           role: '',
           state: '',
-
           class: '',
           name: '',
           region: '',
@@ -164,39 +153,49 @@
     },
     methods: {
       // 获取用户信息
-      async getUserList () {
-        /*const {data: res} = await this.$http.get('users', {
-          params: this.queryInfo
+      getAllUserData(){
+        userApi.getAllUsers(this.params.page, this.params.size, this.params).then((res)=>{
+          this.userList = res.queryResult.list
+          this.total = res.queryResult.total
         })
-        if (res.meta.status !== 200) {
-          return this.$message.error('获取用户列表失败')
-        }
-        this.userlist = res.data.users
-        this.total = res.data.total*/
-
       },
-      // 监听 pagesize 改变的事件
+      // 修改 重置
+      clear () {
+        if (!this.isEdit) {
+          // 重置表单
+          this.$refs.editList.resetFields()
+        } else {
+          Object.assign(this.editList, this.oldNotice)
+        }
+      },
+      // 页码改变触发事件
+      changePage (currentPage) {  // current ---> 当前页码
+        this.params.page = currentPage
+        //调用getNotices方法
+        this.getNotices()
+      },
+      // 监听 size 改变的事件
       handleSizeChange (newSize) {
         console.log(`每页 ${newSize} 条`)
-        this.queryInfo.pagesize = newSize
-        this.getUserList() // 重新获取数据
+        this.params.size = newSize
+        // this.getUserList()  重新获取数据
       },
       // 监听 页码值 改变的事件
       handleCurrentChange (newSize) {
         console.log(`当前页: ${newSize}`)
-        this.queryInfo.pagenum = newSize
-        this.getUserList() // 重新获取数据
+        this.params.page = newSize
+        // this.getUserList() 重新获取数据
       },
       // 监听 switch 开关 状态 的改变 简化Promise操作 使用async await
       async userStateChanged (userInfo) {
-        console.log(userInfo)
-        /*users/:uid/state/:type*/
+        /*console.log(userInfo)
+        /!* users/:uid/state/:type *!/
         const {data: res} = await this.$http.put(`users/${userInfo.id}/state/${userInfo.state}`) // 拼接多项参数使用 ` `
         if (res.meta.states !== 200) {
           userInfo.state = !userInfo.state // 更新失败用户状态返还原来状态
           return this.$message.error('更新用户状态失败！')
         }
-        this.$message.success('更新用户状态成功！')
+        this.$message.success('更新用户状态成功！')*/
       },
       // 提交添加表单信息
       submitForm (formName) {
@@ -214,8 +213,23 @@
         this.$refs[formName].resetFields()
       },
     },
-    created () {
-      this.getUserList()
+    created () { // vm实例的data和methods初始化完毕后执行，发ajax要提前
+      // this.getUserList()
+    },
+    mounted() { // 模板和HTML已经渲染出来
+      /*当dom元素全部渲染完成后,自动调用query*/
+      // this.query();
+      this.getAllUserData();
+    },// 监听查询信息
+    watch: {
+      params: { // 监视pagination属性的变化
+        deep: true, // deep为true，会监视pagination的属性及属性中的对象属性变化
+        handler() {
+          // 变化后的回调函数，这里我们再次调用getDataFromServer即可
+          this.getAllUserData();
+        }
+      },
+      show: {}
     }
   }
 </script>

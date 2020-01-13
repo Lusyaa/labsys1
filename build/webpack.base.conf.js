@@ -36,7 +36,7 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src'),
+      '@': resolve('src'), // @代表着 到src这个文件夹的路径
     }
   },
   plugins: [

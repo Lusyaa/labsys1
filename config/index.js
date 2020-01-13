@@ -10,11 +10,36 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
-
-    // Various Dev Server settings
+    proxyTable: { // 配置统一接口
+      /*'/api/adminHome': {
+        target: 'http://localhost:11000',
+        // target: 'http://10.0.42.106:8888',
+        pathRewrite: {
+          '^/api': ''  //将/api转换成''空字符串
+        }
+      },*/
+      '/api/lab': { // 本机 http://10.0.42.1:8888
+        target: 'http://10.0.42.1:8888',
+        pathRewrite: {
+          '^/api': ''  //将/api转换成''空字符串
+        }
+      },
+      /*'/api/lab': { // 单
+        target: 'http://10.0.42.106:8888',
+        pathRewrite: {
+          '^/api': ''  //将/api转换成''空字符串
+        } // /swagger-ui.html#/
+      },*/
+      /*'/api/lab': { // 王
+        target: 'http://10.0.42.4:8888',
+        pathRewrite: {
+          '^/api': ''  //将/api转换成''空字符串
+        }
+      },*/
+    },
+    //    // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 11000, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,

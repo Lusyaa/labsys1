@@ -11,11 +11,11 @@
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" class="login_form">
         <!-- 用户名 prop="usernam"通过prop来指定验证规则-->
         <el-form-item prop="username">
-          <el-input v-model="loginForm.userCount" prefix-icon="el-icon-s-custom"></el-input>
+          <el-input v-model="loginForm.username" prefix-icon="el-icon-s-custom"></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
-          <el-input v-model="loginForm.userPass" prefix-icon="el-icon-s-goods" type="password"></el-input>
+          <el-input v-model="loginForm.password" prefix-icon="el-icon-s-goods" type="password"></el-input>
         </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item class="btns">
@@ -121,25 +121,24 @@
   import("../../../assets/lib/quietflow.min")
   import("../../../assets/demo/js")
   import("../../../assets/demo/js/prism")
-  import * as Api from '../api/door'
   export default {
     data () {
       return {
         name: 'login',
         // 登录表单的数据绑定对象
         loginForm: {
-          userCount: 'liusuyu',
-          userPass: '123456'
+          username: 'liusuyu',
+          password: '123456'
         },
         // 登录表单的验证规则对象
         loginFormRules: {
           // 验证用户名是否合法  required 是否必填  trigger 触发的时机（blur失去焦点触发）
-          userName: [
+          username: [
             {required: true, message: '请输入登录名称', trigger: 'blur'},
             {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
           ],
           // 验证密码是否合法
-          userPass: [
+          password: [
             {required: true, message: '请输入登录密码', trigger: 'blur'},
             {min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur'}
           ]
@@ -157,31 +156,19 @@
       // 登录表单预验证方法
       login () {
         this.$refs.loginFormRef.validate(async valid => {
-
-         // addSubmit () {
-            //this.$refs['noticeList'].validate((valid) => {
-              if (valid) {
-               // this.$confirm('确定要提交吗？', '提示', {}).then(() => {
-                  // 调用addNoList方法请求服务端的新增接口
-                  Api.loginsys(this.loginForm).then((res) => {
-                    //  解析服务端的相应内容
-                    if (res.success) {
-                      this.$router.push('/home')
-                     // this.$message.success('提交成功！')
-                      //  获取提交表单的ref 调用resetField()方法 将提交表单清空
-                     // this.$refs['noticeList'].resetFields()
-                    } else if (res.message) {
-                      this.$message.error(res.message)
-                    } else {
-                      this.message.error('提交失败！')
-                    }
-                  })
-               // })
-              }
-            })
-          }
-
-  }}
+          if (!valid) return
+          // 解构赋值 res = data
+          const {data: res} = await this.$http.post('Login.vue', this.loginForm)
+          if (res.meta.status !== 200) return this.$message.error('登录失败！')
+          this.$message.success('登录成功')
+          // 1. 将登录成功之后的 token，保存到客户端的 sessionStorage  1.1 项目中出了登录之外的其他API接口，必须在登录之后才能访 1.2 token 只应在当前网站打开期间生效，所以将 token 保存在 sessionStorage 中
+          window.sessionStorage.setItem('token', res.data.token)
+          // 2. 通过编程式导航跳转到后台主页，路由地址是 /home
+          this.$router.push('/home')
+        })
+      }
+    }
+  }
 </script>
 
 <style lang="less" scoped>

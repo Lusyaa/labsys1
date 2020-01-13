@@ -12,7 +12,7 @@
       <el-container>
         <!--侧边栏-->
         <el-aside width="200px">
-          <el-menu default-active="2" :router="true"
+          <el-menu unique-opened :router="true"
                    class="el-menu-vertical-demo">
             <!--用户管理-->
             <el-submenu index="1">
@@ -28,6 +28,9 @@
               <template slot="title">
                 <i class="el-icon-s-operation"></i>设备管理
               </template>
+              <el-menu-item index="/equipclass">
+                <i class="el-icon-menu"></i>设备分类
+              </el-menu-item>
               <el-menu-item index="/equipments">
                 <i class="el-icon-menu"></i>设备列表
               </el-menu-item>
@@ -65,36 +68,36 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {}
-    },
-    methods: {
-      // 头部区域
-      // 退出提示框
-      confirmFn(){
-        this.$confirm('确定要退出吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          window.sessionStorage.clear()
-          this.$router.push('/login')
-        }).catch(() => {
-          console.log("取消退出成功！")
-        });
-      },
-      // 退出
-      /*logout () {
-        // 清空sessionStorage中的token数据
+export default {
+  data () {
+    return {}
+  },
+  methods: {
+    // 头部区域
+    // 退出提示框
+    confirmFn(){
+      this.$confirm('确定要退出吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
         window.sessionStorage.clear()
         this.$router.push('/login')
-      },*/
-      // 主体区域（aside）
+      }).catch(() => {
+        console.log("取消退出成功！")
+      });
+    },
+    // 退出
+    /*logout () {
+      // 清空sessionStorage中的token数据
+      window.sessionStorage.clear()
+      this.$router.push('/login')
+    },*/
+    // 主体区域（aside）
 
-      // 主体区域（main）
-    }
+    // 主体区域（main）
   }
+}
 </script>
 
 <style scoped lang="less">

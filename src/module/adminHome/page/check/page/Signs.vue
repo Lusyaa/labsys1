@@ -98,7 +98,7 @@
       }
     },
     methods: {
-      async getUserList() {
+      /*async getUserList() {
         const { data: res} = await this.$http.get('users',{
           params: this.queryInfo
         })
@@ -107,21 +107,21 @@
         }
         this.userlist = res.data.users
         this.total = res.data.total
-      },
+      },*/
       addList(){
         this.isShow = false
       },
       // 监听 pagesize 改变的事件
       handleSizeChange (newSize) {
         console.log(`每页 ${newSize} 条`)
-        this.queryInfo.pagesize = newSize
-        this.getUserList() // 重新获取数据
+       /* this.queryInfo.pagesize = newSize
+        this.getUserList() */// 重新获取数据
       },
       // 监听 页码值 改变的事件
       handleCurrentChange (newSize) {
         console.log(`当前页: ${newSize}`)
-        this.queryInfo.pagenum = newSize
-        this.getUserList() // 重新获取数据
+       /* this.queryInfo.pagenum = newSize
+        this.getUserList() // 重新获取数据*/
       },
     },
     created () {

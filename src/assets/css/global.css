@@ -12,17 +12,17 @@ html, body, #app {
 /* 卡片视图区域 */
 .el-card {
   box-shadow: 0 1px 1px rgba(0,0,0,0.15) !important;
-  /*height: 450px;*/
+  max-height: 500px;
+  font-size: 12px;
 }
 .el-table {
   margin-top: 15px;
+  max-height: 400px;
   font-size: 12px;
 }
 .block {
   float: right;
   margin-top: 15px;
   margin-bottom: 10px;
-}
-.block1 {
-  float: right;
+  font-size: 12px;
 }

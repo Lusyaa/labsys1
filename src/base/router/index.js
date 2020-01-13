@@ -4,13 +4,14 @@ import Router from 'vue-router'
 import Home from '../../module/adminHome/Home'
 /*学生 home*/
 import userHome from '../../module/userHome/page/userHome'
-
 import Login from '../../module/door/page/Login'
 import Login01 from '../../module/door/page/Login01'
 import Login02 from '../../module/door/page/Login02'
 import Door from '../../module/door/page/Door'
 import Users from '../../module/adminHome/page/user/page/Users'
 import Equipments from '../../module/adminHome/page/equipment/page/Equipments'
+import EquipClass from '../../module/adminHome/page/equipment/page/equipClass'
+import EClass1 from '../../module/adminHome/page/equipment/page/eClass1'
 import Signs from '../../module/adminHome/page/check/page/Signs'
 import Check from '../../module/adminHome/page/check/page/Check'
 import Notices from '../../module/adminHome/page/notice/page/Notices'
@@ -33,6 +34,17 @@ const router = new Router({
       children: [
         {path: '/users', component: Users, hidden: false},
         {path: '/equipments', component: Equipments, hidden: false},
+        {
+          path: '/equipclass',
+          component: EquipClass,
+          hidden: false,
+          children: [
+            {path: '/eclass1', component: EClass1, hidden: false},
+            // {path: '/eclass2', component: EClass2, hidden: false},
+            // {path: '/eclass3', component: EClass3, hidden: false},
+            // {path: '/eclass4', component: EClass4, hidden: false},
+          ]
+        },
         {path: '/check', component: Check, hidden: false},
         {path: '/signs', component: Signs, hidden: false},
         {path: '/notices', component: Notices, hidden: false},
@@ -41,8 +53,9 @@ const router = new Router({
     },
     /* 用户登录界面 userHome*/
     {
-      path: 'userhome',
+      path: '/home1',
       components: userHome,
+      redirect: '/welcome',
       children: [
         {path: '/users', component: Users, hidden: false},
         {path: '/equipments', component: Equipments, hidden: false},
@@ -53,8 +66,7 @@ const router = new Router({
   ]
 })
 // 挂载路由导航守卫 -- 控制页面访问权限
-/*
-router.beforeEach((to, from, next) => {
+/*router.beforeEach((to, from, next) => {
   // to 将要访问的路径
   // form 代表从哪个路径跳转而来
   // next 是一个函数 表示放行 1、next（）直接放行  2、next（‘/login’）强制跳转
@@ -63,23 +75,5 @@ router.beforeEach((to, from, next) => {
   const tokenStr = window.sessionStorage.getItem('token')
   if (!tokenStr) return next('/login')
   next()
-})
-*/
+})*/
 export default router
-// import Vue from 'vue';
-// import Router from 'vue-router';
-// Vue.use(Router);
-// // 定义路由配置
-// let routes = []
-// let concat = (router) => {
-//   routes = routes.concat(router)
-// }
-// // // 导入路由规则
-// import DoorRouter from '../../module/door/router'
-// import HomeRouter from '../../module/user/router'
-// import MarketingRouter from '@/module/Marketing/router'
-// // 合并路由规则
-// concat(DoorRouter)  //加入door门户模块的路由
-// concat(HomeRouter)  //加入User模块的路由
-// concat(MarketingRouter) //加入Marketing模块的路由
-// export default routes;
